@@ -582,7 +582,18 @@
         </div>
     </div>
            <script>
-let studentsData = JSON.parse(localStorage.getItem('studentsData')) || [];
+           let studentsData = [];
+           db.ref("students").on("value", snapshot => {
+    studentsData = [];
+    snapshot.forEach(child => {
+        studentsData.push({
+            id: child.key,
+            ...child.val()
+        });
+    });
+
+    console.log("Firebase Data:", studentsData);
+});
            let isTeacherLoggedIn = false;
         let currentStudentId = null;
 
@@ -799,7 +810,7 @@ let studentsData = JSON.parse(localStorage.getItem('studentsData')) || [];
                 studentsData.push(formData);
             }
 
-            localStorage.setItem('studentsData', JSON.stringify(studentsData));
+            db.ref("students").push(formData);
             alert('✅ Form submitted successfully! Status: Pending');
             
             document.getElementById('photoPreview').style.display = 'none';
@@ -1086,7 +1097,11 @@ let studentsData = JSON.parse(localStorage.getItem('studentsData')) || [];
             const student = studentsData.find(s => s.id === id);
             if (student) {
                 student.status = status;
-                localStorage.setItem('studentsData', JSON.stringify(studentsData));
+                db.ref("students/" + id).update({
+                 db.ref("students/" + id).update({
+    status: status,
+    teacherComments: comments || ''
+});     
                 showAllStudents();
                 alert(`✅ Student ${status.toUpperCase()} successfully!`);
             }
