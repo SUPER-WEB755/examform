@@ -583,18 +583,8 @@
     </div>
            <script>
            let studentsData = [];
-           db.ref("students").on("value", snapshot => {
-    studentsData = [];
-    snapshot.forEach(child => {
-        studentsData.push({
-            id: child.key,
-            ...child.val()
-        });
-    });
-
-    console.log("Firebase Data:", studentsData);
-});
-           let isTeacherLoggedIn = false;
+           
+               let isTeacherLoggedIn = false;
         let currentStudentId = null;
 
         // Tab switching
@@ -1098,11 +1088,9 @@
             if (student) {
                 student.status = status;
                 db.ref("students/" + id).update({
-                 db.ref("students/" + id).update({
     status: status,
     teacherComments: comments || ''
-});     
-                showAllStudents();
+});                showAllStudents();
                 alert(`✅ Student ${status.toUpperCase()} successfully!`);
             }
         }
@@ -1205,6 +1193,15 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+db.ref("students").on("value", snapshot => {
+    studentsData = [];
+    snapshot.forEach(child => {
+        studentsData.push({
+            id: child.key,
+            ...child.val()
+        });
+    });
+});
 </script>
 
 
