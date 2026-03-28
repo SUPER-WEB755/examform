@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examination Portal - Student & Teacher Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .panel {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .panel.active {
+            display: block;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(86, 171, 47, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 65, 108, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-print {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .student-card {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .marks-table th,
+        .marks-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .marks-table th {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .marks-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status.pending { background: #fff3cd; color: #856404; }
+        .status.approved { background: #d4edda; color: #155724; }
+        .status.rejected { background: #f8d7da; color: #721c24; }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .status-check {
+            max-width: 500px;
+            margin: 0 auto 30px;
+            background: #f8f9ff;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e1e8ed;
+        }
+
+        .upload-group {
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            background: #f8f9ff;
+        }
+
+        .subject-limit {
+            color: #e74c3c;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success-msg {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            .panel { box-shadow: none; }
+        }
+
+        .correction-panel {
+            background: #fff3cd;
+            border: 2px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .photo-preview, .signature-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        #studentsList {
+            min-height: 400px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 95%;
+            max-height: 95%;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .search-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        #searchStudent {
+            flex: 2;
+            min-width: 300px;
+            padding: 12px 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .subject-row {
+            display: flex;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        .subject-row select,
+        .subject-row input {
+            flex: 1;
+        }
+
+        .subject-row button {
+            flex: 0 0 auto;
+            padding: 10px 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Examination Portal</h1>
+            <p>Student Form & Teacher Correction Panel</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showPanel('student')">
+                <i class="fas fa-user-graduate"></i> Student Panel
+            </button>
+            <button class="tab-btn" onclick="showPanel('teacher')">
+                <i class="fas fa-chalkboard-teacher"></i> Teacher Panel
+            </button>
+        </div>
+
+        <!-- Student Panel -->
+        <div id="studentPanel" class="panel active">
+            <!-- Status Check Section -->
+            <div class="status-check">
+                <h3><i class="fas fa-check-circle"></i> Check Form Status</h3>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Roll Number</label>
+                        <input type="text" id="statusRollNumber" placeholder="Enter Roll Number">
+                    </div>
+                    <div class="form-group">
+                        <label>Term/Year</label>
+                        <input type="text" id="statusTerm" placeholder="Enter Term/Year (2024)">
+                    </div>
+                </div>
+                <button class="btn btn-warning" onclick="checkStatus()" style="width: 100%;">
+                    <i class="fas fa-search"></i> Check Status
+                </button>
+                <div id="statusResult" class="error-msg"></div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Student Name *</label>
+                    <input type="text" id="studentName" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> Roll Number *</label>
+                    <input type="text" id="rollNumber" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Class *</label>
+                    <select id="class" required>
+                        <option value="">Select Class</option>
+                        <option value="1">Class 1</option>
+                        <option value="2">Class 2</option>
+                        <option value="3">Class 3</option>
+                        <option value="4">Class 4</option>
+                        <option value="5">Class 5</option>
+                        <option value="6">Class 6</option>
+                        <option value="7">Class 7</option>
+                        <option value="8">Class 8</option>
+                        <option value="9">Class 9</option>
+                        <option value="10">Class 10</option>
+                        <option value="11">Class 11</option>
+                        <option value="12">Class 12</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Term/Year *</label>
+                    <input type="text" id="term" placeholder="2024" required>
+                </div>
+            </div>
+
+            <!-- Address Fields -->
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> State *</label>
+                    <select id="state" required>
+                        <option value="">Select State</option>
+                        <option value="Uttar Pradesh">Uttar Pradesh</option>
+                        <option value="Bihar">Bihar</option>
+                        <option value="Delhi">Delhi</option>
+                        <option value="Rajasthan">Rajasthan</option>
+                        <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-city"></i> District *</label>
+                    <select id="district" required>
+                        <option value="">Select District</option>
+                        <option value="Lucknow">Lucknow</option>
+                        <option value="Jaunpur">Jaunpur</option>
+                        <option value="Patna">Patna</option>
+                        <option value="Delhi">Delhi</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-home"></i> Village/Street *</label>
+                <input type="text" id="village" required>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-exchange-alt"></i> Turn *</label>
+                    <select id="turn" required>
+                        <option value="">Select Turn</option>
+                        <option value="Morning">Morning Turn</option>
+                        <option value="Day">Day Turn</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-female"></i> Mother's Name *</label>
+                    <input type="text" id="motherName" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-male"></i> Father's Name *</label>
+                <input type="text" id="fatherName" required>
+            </div>
+
+            <!-- Photo & Signature Upload -->
+            <div class="row">
+                <div class="form-group">
+                    <label><i class="fas fa-image"></i> Photo (Optional)</label>
+                    <div class="upload-group">
+                        <input type="file" id="studentPhoto" accept="image/*" onchange="previewPhoto(this)">
+                        <p style="color: #666; margin-top: 10px;">Upload student photo</p>
+                        <img id="photoPreview" class="photo-preview" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-signature"></i> Signature (Optional)</label>
+                    <div class="upload-group">
+                        <input type="file" id="studentSignature" accept="image/*" onchange="previewSignature(this)">
+                        <p style="color: #666; margin-top: 10px;">Upload signature</p>
+                        <img id="signaturePreview" class="signature-preview" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-list-alt"></i> Previous Year Term Marks</label>
+                <textarea id="previousMarks" rows="4" placeholder="Enter previous year term marks details..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> Subjects (Maximum 4 Subjects)</label>
+                <div class="subject-limit">⚠️ Maximum 4 subjects allowed</div>
+                <div id="subjectsContainer">
+                    <!-- Subjects will be added here -->
+                </div>
+                <div id="subjectLimitMsg" class="error-msg">Maximum 4 subjects reached!</div>
+                <button type="button" class="btn btn-primary" id="addSubjectBtn" onclick="addSubject()" style="margin-top: 10px;">
+                    <i class="fas fa-plus"></i> Add Subject
+                </button>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="fillSampleData()">
+                    <i class="fas fa-magic"></i> Fill Sample Data
+                </button>
+                <button class="btn btn-success" onclick="submitForm()">
+                    <i class="fas fa-paper-plane"></i> Submit Form
+                </button>
+                                <button class="btn btn-print no-print" onclick="printForm()">
+                    <i class="fas fa-print"></i> Print Preview
+                </button>
+            </div>
+        </div>
+
+        <!-- Teacher Login Panel -->
+        <div id="teacherLoginPanel" class="panel">
+            <div class="login-form">
+                <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">
+                    <i class="fas fa-lock"></i> Teacher Login
+                </h2>
+                <div class="form-group">
+                    <label>Teacher ID</label>
+                    <input type="text" id="teacherId" placeholder="Enter Teacher ID">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="teacherPassword" placeholder="Enter Password">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="teacherLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <p style="text-align: center; margin-top: 15px; color: #666; font-size: 14px;">
+                    Demo: <strong>teacher123</strong> / <strong>password123</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- Teacher Main Panel -->
+        <div id="teacherPanel" class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2><i class="fas fa-chalkboard-teacher"></i> Teacher Dashboard</h2>
+                <button class="btn btn-danger no-print" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchStudent" placeholder="Search by Name, Roll Number or Class..." oninput="searchStudents()">
+                <button class="btn btn-primary" onclick="showAllStudents()">
+                    <i class="fas fa-list"></i> Show All
+                </button>
+            </div>
+
+            <div id="studentsList">
+                <p style="text-align: center; color: #666; font-size: 18px;">Login to view students...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Detail Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 id="modalTitle" style="color: #2c3e50;"><i class="fas fa-user"></i> Student Details</h3>
+                <button class="btn btn-danger" onclick="closeModal()" style="padding: 10px 20px;">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+           <script>
+let studentsData = JSON.parse(localStorage.getItem('studentsData')) || [];
+           let isTeacherLoggedIn = false;
+        let currentStudentId = null;
+
+        // Tab switching
+        function showPanel(panel) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            if (panel === 'student') {
+                document.getElementById('studentPanel').classList.add('active');
+                event.target.classList.add('active');
+            } else if (panel === 'teacher') {
+                event.target.classList.add('active');
+                if (isTeacherLoggedIn) {
+                    document.getElementById('teacherPanel').classList.add('active');
+                } else {
+                    document.getElementById('teacherLoginPanel').classList.add('active');
+                }
+            }
+        }
+
+        // Check Form Status
+        function checkStatus() {
+            const rollNumber = document.getElementById('statusRollNumber').value;
+            const term = document.getElementById('statusTerm').value;
+            const statusDiv = document.getElementById('statusResult');
+            
+            if (!rollNumber || !term) {
+                showStatusMessage('Please enter Roll Number and Term!', 'error');
+                return;
+            }
+
+            const student = studentsData.find(s => s.rollNumber === rollNumber && s.term === term);
+            
+            if (student) {
+                if (student.status === 'rejected') {
+                    showStatusMessage(`✅ Form Rejected! You can refill the form.`, 'success');
+                    loadStudentData(student.id);
+                } else if (student.status === 'approved') {
+                    showStatusMessage(`✅ Form Already Approved! Cannot modify.`, 'approved');
+                } else {
+                    showStatusMessage(`⏳ Form is Pending. Status: ${student.status.toUpperCase()}`, 'pending');
+                }
+            } else {
+                showStatusMessage('✅ No form found. You can fill new form.', 'success');
+            }
+        }
+
+        function showStatusMessage(message, type) {
+            const statusDiv = document.getElementById('statusResult');
+            statusDiv.textContent = message;
+            statusDiv.className = `${type}-msg`;
+            statusDiv.style.display = 'block';
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Photo preview
+        function previewPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('photoPreview').src = e.target.result;
+                    document.getElementById('photoPreview').style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function previewSignature(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('signaturePreview').src = e.target.result;
+                    document.getElementById('signaturePreview').style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Fill sample data
+        function fillSampleData() {
+            document.getElementById('studentName').value = 'Rahul Sharma';
+            document.getElementById('rollNumber').value = '101';
+            document.getElementById('class').value = '10';
+            document.getElementById('term').value = '2024';
+            document.getElementById('state').value = 'Uttar Pradesh';
+            document.getElementById('district').value = 'Jaunpur';
+            document.getElementById('village').value = 'Village Name';
+            document.getElementById('turn').value = 'Morning';
+            document.getElementById('motherName').value = 'Sita Sharma';
+            document.getElementById('fatherName').value = 'Ram Sharma';
+            document.getElementById('previousMarks').value = 'Previous year: Hindi-85, English-78, Maths-92, Science-88';
+            
+            document.getElementById('subjectsContainer').innerHTML = '';
+            const sampleSubjects = [
+                {subject: 'Hindi', marks: '85'},
+                {subject: 'English', marks: '78'},
+                {subject: 'Maths', marks: '92'},
+                {subject: 'Science', marks: '88'}
+            ];
+            sampleSubjects.forEach(s => addSubjectRow(s));
+        }
+
+        // Add subject with limit
+        function addSubject() {
+            const container = document.getElementById('subjectsContainer');
+            const currentCount = container.children.length;
+            
+            if (currentCount >= 4) {
+                document.getElementById('subjectLimitMsg').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('subjectLimitMsg').style.display = 'none';
+                }, 3000);
+                return;
+            }
+            addSubjectRow();
+        }
+
+        function addSubjectRow(subjectData = null) {
+            const container = document.getElementById('subjectsContainer');
+            const subjectRow = document.createElement('div');
+            subjectRow.className = 'subject-row';
+            subjectRow.innerHTML = `
+                <select class="subject-select">
+                    <option value="">Select Subject</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="English">English</option>
+                    <option value="Maths">Maths</option>
+                    <option value="Science">Science</option>
+                    <option value="Social Science">Social Science</option>
+                    <option value="Sanskrit">Sanskrit</option>
+                    <option value="Computer">Computer</option>
+                </select>
+                <input type="number" class="marks-input" placeholder="Marks Obtained" min="0" max="100">
+                <button type="button" class="btn btn-danger" onclick="removeSubject(this)">Remove</button>
+            `;
+            
+            if (subjectData) {
+                subjectRow.querySelector('.subject-select').value = subjectData.subject;
+                subjectRow.querySelector('.marks-input').value = subjectData.marks;
+            }
+            
+            container.appendChild(subjectRow);
+        }
+
+        function removeSubject(button) {
+            if (document.querySelectorAll('.subject-row').length > 1) {
+                button.parentElement.remove();
+            }
+        }
+
+        // Submit form
+        function submitForm() {
+            const rollNumber = document.getElementById('rollNumber').value;
+            const term = document.getElementById('term').value;
+            const className = document.getElementById('class').value;
+
+            const existing = studentsData.find(s => 
+                s.rollNumber === rollNumber && 
+                s.term === term && 
+                s.class === className
+            );
+
+            if (existing && existing.status !== 'rejected') {
+                alert('❌ Form already exists with same Roll No, Class & Term! Check Status first.');
+                return;
+            }
+
+            const formData = {
+                id: existing ? existing.id : Date.now(),
+                name: document.getElementById('studentName').value,
+                rollNumber: rollNumber,
+                class: className,
+                term: term,
+                state: document.getElementById('state').value,
+                district: document.getElementById('district').value,
+                village: document.getElementById('village').value,
+                turn: document.getElementById('turn').value,
+                motherName: document.getElementById('motherName').value,
+                fatherName: document.getElementById('fatherName').value,
+                previousMarks: document.getElementById('previousMarks').value,
+                subjects: [],
+                photo: document.getElementById('photoPreview').src || '',
+                signature: document.getElementById('signaturePreview').src || '',
+                status: 'pending',
+                teacherComments: '',
+                submittedAt: new Date().toLocaleString()
+            };
+
+            document.querySelectorAll('.subject-row').forEach(row => {
+                const subject = row.querySelector('.subject-select').value;
+                const marks = row.querySelector('.marks-input').value;
+                if (subject && marks) {
+                    formData.subjects.push({ subject, marks });
+                }
+            });
+
+            if (formData.subjects.length === 0) {
+                alert('Please add at least 1 subject!');
+                return;
+            }
+
+            if (!formData.name || !formData.rollNumber || !formData.class || !formData.term) {
+                alert('Please fill all required fields!');
+                return;
+            }
+
+            const index = studentsData.findIndex(s => s.id === formData.id);
+            if (index > -1) {
+                studentsData[index] = formData;
+            } else {
+                studentsData.push(formData);
+            }
+
+            localStorage.setItem('studentsData', JSON.stringify(studentsData));
+            alert('✅ Form submitted successfully! Status: Pending');
+            
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('signaturePreview').style.display = 'none';
+            document.getElementById('subjectsContainer').innerHTML = '';
+            addSubjectRow();
+        }
+
+        // Print form
+        function printForm() {
+            const formData = getCurrentFormData();
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head><title>Student Form Print</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 40px; }
+                    .print-header { text-align: center; margin-bottom: 40px; }
+                    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                    th, td { border: 1px solid #333; padding: 12px; text-align: left; }
+                    th { background: #667eea; color: white; }
+                    .photo-sig { text-align: center; margin: 20px 0; }
+                    .photo-sig img { max-width: 100px; max-height: 100px; }
+                </style>
+                </head>
+                <body>
+                    <div class="print-header">
+                        <h1>EXAMINATION FORM</h1>
+                        <p>School Name - Academic Year ${formData.term}</p>
+                    </div>
+                    <table>
+                        <tr><td><strong>Name:</strong></td><td>${formData.name}</td><td><strong>Roll No:</strong></td><td>${formData.rollNumber}</td></tr>
+                        <tr><td><strong>Class:</strong></td><td>${formData.class}</td><td><strong>Term:</strong></td><td>${formData.term}</td></tr>
+                        <tr><td><strong>Address:</strong></td><td colspan="3">${formData.village}, ${formData.district}, ${formData.state}</td></tr>
+                        <tr><td><strong>Father's Name:</strong></td><td>${formData.fatherName}</td><td><strong>Mother's Name:</strong></td><td>${formData.motherName}</td></tr>
+                    </table>
+                    <div class="photo-sig">
+                        ${formData.photo ? `<img src="${formData.photo}" alt="Photo">` : '<p>Photo</p>'}
+                        ${formData.signature ? `<img src="${formData.signature}" alt="Signature">` : '<p>Signature</p>'}
+                    </div>
+                    <h3>Subjects Marks:</h3>
+                    <table>
+                        <tr><th>Subject</th><th>Marks Obtained</th></tr>
+                        ${formData.subjects.map(s => `<tr><td>${s.subject}</td><td>${s.marks}</td></tr>`).join('')}
+                    </table>
+                </body></html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function getCurrentFormData() {
+            const formData = {
+                name: document.getElementById('studentName').value,
+                rollNumber: document.getElementById('rollNumber').value,
+                class: document.getElementById('class').value,
+                term: document.getElementById('term').value,
+                state: document.getElementById('state').value,
+                district: document.getElementById('district').value,
+                village: document.getElementById('village').value,
+                turn: document.getElementById('turn').value,
+                motherName: document.getElementById('motherName').value,
+                fatherName: document.getElementById('fatherName').value,
+                previousMarks: document.getElementById('previousMarks').value,
+                photo: document.getElementById('photoPreview').src || '',
+                signature: document.getElementById('signaturePreview').src || '',
+                subjects: []
+            };
+
+            document.querySelectorAll('.subject-row').forEach(row => {
+                const subject = row.querySelector('.subject-select').value;
+                const marks = row.querySelector('.marks-input').value;
+                if (subject && marks) {
+                    formData.subjects.push({ subject, marks });
+                }
+            });
+            return formData;
+        }
+
+        // Teacher functions
+        function teacherLogin() {
+            const teacherId = document.getElementById('teacherId').value;
+            const password = document.getElementById('teacherPassword').value;
+
+            if (teacherId === 'teacher123' && password === 'password123') {
+                isTeacherLoggedIn = true;
+                document.getElementById('teacherLoginPanel').classList.remove('active');
+                document.getElementById('teacherPanel').classList.add('active');
+                showAllStudents();
+                alert('✅ Teacher Login Successful!');
+            } else {
+                alert('❌ Invalid credentials! Use: teacher123 / password123');
+            }
+        }
+
+        function logout() {
+            isTeacherLoggedIn = false;
+            document.getElementById('teacherPanel').classList.remove('active');
+            document.getElementById('teacherLoginPanel').classList.add('active');
+            document.getElementById('teacherId').value = '';
+            document.getElementById('teacherPassword').value = '';
+        }
+
+        function searchStudents() {
+            const query = document.getElementById('searchStudent').value.toLowerCase();
+            const filtered = studentsData.filter(student => 
+                student.name.toLowerCase().includes(query) || 
+                student.rollNumber.includes(query) ||
+                student.class.includes(query) ||
+                student.term.includes(query)
+            );
+            displayStudents(filtered);
+        }
+
+        function showAllStudents() {
+            document.getElementById('searchStudent').value = '';
+            displayStudents(studentsData);
+        }
+
+        function displayStudents(students) {
+            const container = document.getElementById('studentsList');
+            if (students.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 18px;">No students found</p>';
+                return;
+            }
+
+            container.innerHTML = students.map(student => `
+                <div class="student-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div style="flex: 1;">
+                            <h3>${student.name} <span style="font-size: 0.8em; color: #666;">(Roll: ${student.rollNumber})</span></h3>
+                            <p><strong>Class:</strong> ${student.class} | <strong>Term:</strong> ${student.term} | 
+                               <strong>Status:</strong> <span class="status ${student.status}">${student.status.toUpperCase()}</span></p>
+                            <p><strong>Address:</strong> ${student.village}, ${student.district}, ${student.state}</p>
+                        </div>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                          <button class="btn btn-primary" onclick="openStudentModal(${student.id})">
+                                <i class="fas fa-eye"></i> View/Edit
+                            </button>
+                            <button class="btn btn-success" onclick="approveStudent(${student.id})">
+                                <i class="fas fa-check"></i> Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="rejectStudent(${student.id})">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                    ${student.photo ? `<img src="${student.photo}" style="width: 80px; height: 80px; border-radius: 10px; object-fit: cover; margin-top: 10px; float: right;">` : ''}
+                    <div style="clear: both;">
+                        <div class="marks-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Marks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${student.subjects.map(s => `
+                                        <tr>
+                                            <td>${s.subject}</td>
+                                            <td>${s.marks}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openStudentModal(id) {
+            currentStudentId = id;
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                document.getElementById('modalTitle').textContent = `${student.name} - Complete Details`;
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="student-card">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                            <div><strong>Name:</strong> ${student.name}</div>
+                            <div><strong>Roll No:</strong> ${student.rollNumber}</div>
+                            <div><strong>Class:</strong> ${student.class}</div>
+                            <div><strong>Term:</strong> ${student.term}</div>
+                            <div><strong>State:</strong> ${student.state || 'N/A'}</div>
+                            <div><strong>District:</strong> ${student.district || 'N/A'}</div>
+                            <div><strong>Village:</strong> ${student.village || 'N/A'}</div>
+                            <div><strong>Turn:</strong> ${student.turn}</div>
+                            <div><strong>Father:</strong> ${student.fatherName}</div>
+                            <div><strong>Mother:</strong> ${student.motherName}</div>
+                        </div>
+                        
+                        ${student.photo ? `<img src="${student.photo}" style="width: 120px; height: 120px; border-radius: 10px; object-fit: cover; float: right;">` : ''}
+                        
+                        <div style="clear: both;">
+                            <strong>Previous Year Marks:</strong><br>
+                            <textarea style="width: 100%; height: 80px; margin-top: 10px;">${student.previousMarks}</textarea>
+                        </div>
+                        
+                        <div style="margin-top: 20px;">
+                            <strong>Subjects (${student.subjects.length}/4):</strong>
+                            <div class="marks-table" style="margin-top: 10px;">
+                                <table>
+                                    <thead><tr><th>Subject</th><th>Marks</th></tr></thead>
+                                    <tbody>
+                                        ${student.subjects.map(s => `<tr><td>${s.subject}</td><td>${s.marks}</td></tr>`).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="correction-panel" style="margin-top: 20px;">
+                            <strong>Current Status:</strong> <span class="status ${student.status}">${student.status.toUpperCase()}</span><br><br>
+                            <strong>Teacher Comments:</strong><br>
+                            <textarea id="teacherComments" style="width: 100%; height: 100px;">${student.teacherComments || ''}</textarea><br><br>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                <button class="btn btn-success" onclick="updateStatus('approved')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn btn-danger" onclick="updateStatus('rejected')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                                <button class="btn btn-warning" onclick="editStudent(${student.id})">
+                                    <i class="fas fa-edit"></i> Edit Form
+                                </button>
+                                <button class="btn btn-print" onclick="printStudent(${student.id})">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('studentModal').style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').style.display = 'none';
+        }
+
+        function editStudent(id) {
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                closeModal();
+                loadStudentData(id);
+                showPanel('student');
+                alert('📝 Student data loaded for editing. Modify and resubmit.');
+            }
+        }
+
+        function loadStudentData(id) {
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                document.getElementById('studentName').value = student.name;
+                document.getElementById('rollNumber').value = student.rollNumber;
+                document.getElementById('class').value = student.class;
+                document.getElementById('term').value = student.term;
+                document.getElementById('state').value = student.state || '';
+                document.getElementById('district').value = student.district || '';
+                document.getElementById('village').value = student.village || '';
+                document.getElementById('turn').value = student.turn;
+                document.getElementById('motherName').value = student.motherName;
+                document.getElementById('fatherName').value = student.fatherName;
+                document.getElementById('previousMarks').value = student.previousMarks;
+                
+                document.getElementById('subjectsContainer').innerHTML = '';
+                student.subjects.forEach(subject => addSubjectRow(subject));
+            }
+        }
+
+        function approveStudent(id) {
+            if (confirm('Approve this form?')) {
+                updateStudentStatus(id, 'approved');
+            }
+        }
+
+        function rejectStudent(id) {
+            if (confirm('Reject this form? Student can refill.')) {
+                updateStudentStatus(id, 'rejected');
+            }
+        }
+
+        function updateStudentStatus(id, status) {
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                student.status = status;
+                localStorage.setItem('studentsData', JSON.stringify(studentsData));
+                showAllStudents();
+                alert(`✅ Student ${status.toUpperCase()} successfully!`);
+            }
+        }
+
+        function updateStatus(status) {
+            const comments = document.getElementById('teacherComments').value;
+            const student = studentsData.find(s => s.id === currentStudentId);
+            if (student) {
+                student.status = status;
+                student.teacherComments = comments;
+                localStorage.setItem('studentsData', JSON.stringify(studentsData));
+                closeModal();
+                showAllStudents();
+                alert(`✅ Status updated to ${status.toUpperCase()}!`);
+            }
+        }
+
+        function printStudent(id) {
+            const student = studentsData.find(s => s.id === id);
+            if (student) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Student Form - ${student.name}</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 40px; }
+                            .header { text-align: center; margin-bottom: 40px; border-bottom: 3px solid #667eea; padding-bottom: 20px; }
+                            table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                            th, td { border: 1px solid #333; padding: 12px; text-align: left; }
+                            th { background: #667eea; color: white; }
+                            .status-approved { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; text-align: center; }
+                            .photo-section { text-align: center; margin: 20px 0; }
+                            .photo-section img { max-width: 120px; max-height: 120px; border: 2px solid #333; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>EXAMINATION FORM</h1>
+                            <h2>${student.name}</h2>
+                            <p>Roll No: ${student.rollNumber} | Class: ${student.class} | Term: ${student.term}</p>
+                            <p>Address: ${student.village}, ${student.district}, ${student.state}</p>
+                        </div>
+                        <div class="photo-section">
+                            ${student.photo ? `<img src="${student.photo}" alt="Student Photo">` : '<div style="width: 120px; height: 120px; border: 2px solid #333; display: inline-block; line-height: 120px;">Photo</div>'}
+                            ${student.signature ? `<img src="${student.signature}" alt="Signature" style="margin-left: 20px;">` : '<div style="width: 120px; height: 60px; border: 2px solid #333; display: inline-block; line-height: 60px; vertical-align: top;">Signature</div>'}
+                        </div>
+                        <table>
+                            <tr><td><strong>Father's Name:</strong></td><td>${student.fatherName}</td><td><strong>Mother's Name:</strong></td><td>${student.motherName}</td></tr>
+                            <tr><td><strong>Turn:</strong></td><td>${student.turn}</td><td><strong>Submitted:</strong></td><td>${student.submittedAt}</td></tr>
+                        </table>
+                        <h3>Subjects Marks:</h3>
+                        <table>
+                            <tr><th>Subject</th><th>Marks Obtained</th></tr>
+                            ${student.subjects.map(s => `<tr><td>${s.subject}</td><td>${s.marks}</td></tr>`).join('')}
+                        </table>
+                        <h3>Previous Year Marks:</h3>
+                        <p>${student.previousMarks}</p>
+                        <div class="status-approved">
+                            <strong>Status: ${student.status.toUpperCase()}</strong><br>
+                            <strong>Teacher Comments:</strong> ${student.teacherComments || 'No comments'}
+                        </div>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+
+        // Close modal on outside click
+        window.onclick = function(event) {
+            const modal = document.getElementById('studentModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            addSubjectRow(); // Add first subject row
+        });
+    </script>
+ 
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC4JiLBSdilQ4cfMJOVyEaiAhLZ0c14Bhk",
+  authDomain: "exam-form-d0832.firebaseapp.com",
+  databaseURL: "https://exam-form-d0832-default-rtdb.firebaseio.com",
+  projectId: "exam-form-d0832",
+  storageBucket: "exam-form-d0832.firebasestorage.app",
+  messagingSenderId: "963197534932",
+  appId: "1:963197534932:web:ecd74300da8cca35eff141"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+</script>
+
+
+</body>
+</html>
